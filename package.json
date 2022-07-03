@@ -1,0 +1,14 @@
+{
+  "name": "ray-tracing-typescript",
+  "version": "1.0.0",
+  "description": "",
+  "main": "",
+  "scripts": {
+    "start": "ts-node main.ts > images/image_6.ppm"
+  },
+  "author": "henripc",
+  "license": "MIT",
+  "devDependencies": {
+    "ts-node": "^10.8.1"
+  }
+}
