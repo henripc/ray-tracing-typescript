@@ -1,3 +1,5 @@
+import { randomDouble } from "./RtWeekend";
+
 export class Vector {
     public e: number[];
 
@@ -77,5 +79,39 @@ export class Vector {
 
     public static unitVector(v: Vector): Vector {
         return v.scalarDivision(v.length());
+    }
+
+    public static random(min?: number, max?: number): Vector {
+        if (min && max) {
+            return new Vector(randomDouble(min, max), randomDouble(min, max), randomDouble(min, max));
+        }
+
+        return new Vector(randomDouble(), randomDouble(), randomDouble());
+    }
+
+    public static randomInUnitSphere(): Vector {
+        while (true) {
+            const p = Vector.random(-1, 1);
+            if (p.lengthSquared() >= 1) continue;
+
+            return p;
+        }
+    }
+
+    public static randomUnitVector(): Vector {
+        return this.unitVector(this.randomInUnitSphere());
+    }
+
+    public nearZero(): boolean {
+        // Return true if the vector is close to zero in all dimensions.
+        const s = 1e-8;
+        return (Math.abs(this.x()) < s) && (Math.abs(this.y()) < s) && (Math.abs(this.z()) < s);
+    }
+
+    public static reflect(v: Vector, n: Vector): Vector {
+        return Vector.sumOfVectors(
+            v,
+            n.scalarMultiplication(-2 * Vector.dot(v, n))
+        );
     }
 }
