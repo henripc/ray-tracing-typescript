@@ -114,4 +114,24 @@ export class Vector {
             n.scalarMultiplication(-2 * Vector.dot(v, n))
         );
     }
+
+    public static refract(uv: Vector, n: Vector, etaIOverEtaT: number): Vector {
+        const cosTheta = Math.min(Vector.dot(uv.scalarMultiplication(-1), n), 1);
+        const rOutPerp = Vector.sumOfVectors(
+            uv,
+            n.scalarMultiplication(cosTheta)
+        ).scalarMultiplication(etaIOverEtaT);
+        const rOutParallel = n.scalarMultiplication(-Math.sqrt(Math.abs(1 - rOutPerp.lengthSquared())));
+
+        return Vector.sumOfVectors(rOutPerp, rOutParallel);
+    }
+
+    public static randomInUnitDisk(): Vector {
+        while (true) {
+            const p = new Vector(randomDouble(-1, 1), randomDouble(-1, 1), 0);
+            if (p.lengthSquared() >= 1) continue;
+
+            return p;
+        }
+    }
 }
