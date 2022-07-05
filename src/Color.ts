@@ -11,11 +11,11 @@ export class Color extends Vector {
         let g = pixelColor.y();
         let b = pixelColor.z();
 
-        // Divide the color by the number of samples.
+        // Divide the color by the number of samples and gamma-correct for gamma=2.
         const scale = 1 / samplesPerPixel;
-        r *= scale;
-        g *= scale;
-        b *= scale;
+        r = Math.sqrt(scale * r);
+        g = Math.sqrt(scale * g);
+        b = Math.sqrt(scale * b);
 
         // Write the translated [0,255] value of each color component.
         console.log(`${ Math.floor(256 * clamp(r, 0, 0.999)) } ${ Math.floor(256 * clamp(g, 0, 0.999)) } ${ Math.floor(256 * clamp(b, 0, 0.999)) }`);
