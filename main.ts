@@ -4,9 +4,55 @@ import { Ray } from "./src/Ray";
 import { HittableList } from "./src/HittableList";
 import { Sphere } from "./src/Sphere";
 import { HitRecord } from './src/Hittable';
-import { INFINITY, randomDouble } from "./src/RtWeekend";
+import { INFINITY, PI, randomDouble } from "./src/RtWeekend";
 import { Camera } from "./src/Camera";
-import { Lambertian, Metal } from './src/Material';
+import { Dielectric, Lambertian, Material, Metal } from './src/Material';
+
+const randomScene = (): HittableList => {
+    const world = new HittableList();
+
+    const groundMaterial = new Lambertian(new Color(0.5, 0.5, 0.5));
+    world.add(new Sphere(new Vector(0, -1000, 0), 1000, groundMaterial));
+
+    for (let a = -11; a < 11; a++) {
+        for (let b = -11; b < 11; b++) {
+            const chooseMat = randomDouble();
+            const center = new Vector(a + 0.9 * randomDouble(), 0.2, b + 0.9 * randomDouble());
+
+            if (Vector.sumOfVectors(center, (new Vector(4, 0.2, 0)).scalarMultiplication(-1)).length() > 0.9) {
+                let sphereMaterial: Material;
+
+                if (chooseMat < 0.8) {
+                    // diffuse
+                    const albedo = Vector.multiplicationOfVectors(Color.random(), Color.random());
+                    sphereMaterial = new Lambertian(albedo);
+                    world.add(new Sphere(center, 0.2, sphereMaterial));
+                } else if (chooseMat < 0.95) {
+                    // metal
+                    const albedo = Color.random(0.5, 1);
+                    const fuzz = randomDouble(0, 0.5);
+                    sphereMaterial = new Metal(albedo, fuzz);
+                    world.add(new Sphere(center, 0.2, sphereMaterial));
+                } else {
+                    // glass
+                    sphereMaterial = new Dielectric(1.5);
+                    world.add(new Sphere(center, 0.2, sphereMaterial));
+                }
+            }
+        }
+    }
+
+    const material1 = new Dielectric(1.5);
+    world.add(new Sphere(new Vector(0, 1, 0), 1, material1));
+
+    const material2 = new Lambertian(new Color(0.4, 0.2, 0.1));
+    world.add(new Sphere(new Vector(-4, 1, 0), 1, material2));
+
+    const material3 = new Metal(new Color(0.7, 0.6, 0.5), 0);
+    world.add(new Sphere(new Vector(4, 1, 0), 1, material3));
+
+    return world;
+};
 
 const rayColor = (r: Ray, world: HittableList, depth: number): Color => {
     const rec = new HitRecord();
@@ -32,27 +78,23 @@ const rayColor = (r: Ray, world: HittableList, depth: number): Color => {
 };
 
 // Image
-const aspectRatio = 16 / 9;
-const imageWidth = 400;
+const aspectRatio = 3 / 2;
+const imageWidth = 1200;
 const imageHeight = Math.floor(imageWidth / aspectRatio);
-const samplesPerPixel = 100;
+const samplesPerPixel = 500;
 const maxDepth = 50;
 
 // World
-const world = new HittableList();
-
-const materialGround = new Lambertian(new Color(0.8, 0.8, 0));
-const materialCenter = new Lambertian(new Color(0.7, 0.3, 0.3));
-const materialLeft = new Metal(new Color(0.8, 0.8, 0.8), 0.3);
-const materialRight = new Metal(new Color(0.8, 0.6, 0.2), 1);
-
-world.add(new Sphere(new Vector(0, -100.5, -1), 100, materialGround));
-world.add(new Sphere(new Vector(0, 0, -1), 0.5, materialCenter));
-world.add(new Sphere(new Vector(-1, 0, -1), 0.5, materialLeft));
-world.add(new Sphere(new Vector(1, 0, -1), 0.5, materialRight));
+const world = randomScene();
 
 // Camera
-const cam = new Camera();
+const lookFrom = new Vector(13, 2, 3);
+const lookAt = new Vector(0, 0, 0);
+const vUp = new Vector(0, 1, 0);
+const distToFocus = 10;
+const aperture = 0.1;
+
+const cam = new Camera(lookFrom, lookAt, vUp, 20, aspectRatio, aperture, distToFocus);
 
 // Render
 console.log(`P3\n${ imageWidth } ${ imageHeight }\n255`);
