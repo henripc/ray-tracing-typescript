@@ -32,6 +32,7 @@ export class HittableList implements Hittable {
                 rec.normal = tempRec.normal;
                 rec.t = tempRec.t;
                 rec.frontFace = tempRec.frontFace;
+                rec.mat = tempRec.mat;
             }
         }
 
