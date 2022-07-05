@@ -4,7 +4,7 @@ import { Ray } from "./src/Ray";
 import { HittableList } from "./src/HittableList";
 import { Sphere } from "./src/Sphere";
 import { HitRecord } from './src/Hittable';
-import { INFINITY, PI, randomDouble } from "./src/RtWeekend";
+import { INFINITY, randomDouble } from "./src/RtWeekend";
 import { Camera } from "./src/Camera";
 import { Dielectric, Lambertian, Material, Metal } from './src/Material';
 
