@@ -4,7 +4,7 @@
   "description": "",
   "main": "",
   "scripts": {
-    "start": "ts-node main.ts > images/image_7.ppm"
+    "start": "ts-node main.ts > images/image_19.ppm"
   },
   "author": "henripc",
   "license": "MIT",
